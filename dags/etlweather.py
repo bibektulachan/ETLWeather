@@ -2,7 +2,8 @@ from airflow import DAG # We need this library
 from airflow.providers.http.hooks.http import HttpHook # This hooks library from airflow helps to read from the API
 from airflow.providers.postgres.hooks.postgres import PostgresHook # This helps to push our data to postgres sql. Similarly, there will be a separate hooks to push to S3 or mysql
 from airflow.decorators import task # This helps to create tasks inside our DAG
-from airflow.utils.dates import days_ago
+# from airflow.utils.dates import days_ago
+from datetime import datetime, timedelta
 import requests
 import json
 
@@ -15,13 +16,13 @@ API_CONN_ID='open_meteo_api' # Connection name
 # Basic setup that is required in airflow
 default_args={
     'owner':'airflow',
-    'start_date':days_ago(1)
+    'start_date':datetime(2025, 11, 11)
 }
 
 ## DAG
 with DAG(dag_id='weather_etl_pipeline', # DAG name
          default_args=default_args,
-         schedule_interval='@daily',
+         schedule=timedelta(hours=24),
          catchup=False) as dags:
     
     @task() # We have already imported this library
